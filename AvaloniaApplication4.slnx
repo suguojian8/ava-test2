@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="AvaloniaApplication4.Android/AvaloniaApplication4.Android.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="AvaloniaApplication4.Browser/AvaloniaApplication4.Browser.csproj" />
+  <Project Path="AvaloniaApplication4.Desktop/AvaloniaApplication4.Desktop.csproj" />
+  <Project Path="AvaloniaApplication4.iOS/AvaloniaApplication4.iOS.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="AvaloniaApplication4/AvaloniaApplication4.csproj" />
+</Solution>
