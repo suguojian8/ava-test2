@@ -1,0 +1,65 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_QUALITY: 'preview'
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET ${{ env.DOTNET_VERSION }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-quality: ${{ env.DOTNET_QUALITY }}
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Install Android workload
+      run: dotnet workload install android
+
+    - name: Restore dependencies
+      run: dotnet restore AvaloniaApplication4.Android/AvaloniaApplication4.Android.csproj
+
+    - name: Build Android APK (Unsigned)
+      run: dotnet publish AvaloniaApplication4.Android/AvaloniaApplication4.Android.csproj \
+        -c Release \
+        -f net10.0-android \
+        -p:AndroidPackageFormat=apk \
+        --no-restore
+
+    - name: Find APK file
+      id: find_apk
+      run: |
+        APK_PATH=$(find AvaloniaApplication4.Android/bin/Release/net10.0-android -name "*.apk" -type f | head -1)
+        echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
+        echo "Found APK: $APK_PATH"
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk-unsigned
+        path: ${{ steps.find_apk.outputs.APK_PATH }}
+        retention-days: 90
+
+    - name: Build Summary
+      run: |
+        echo "✅ Build completed successfully!"
+        echo "📱 APK file: ${{ steps.find_apk.outputs.APK_PATH }}"
+        echo "📦 Artifact name: android-apk-unsigned"
