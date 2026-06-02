@@ -38,11 +38,7 @@ jobs:
       run: dotnet restore AvaloniaApplication4.Android/AvaloniaApplication4.Android.csproj
 
     - name: Build Android APK (Unsigned)
-      run: dotnet publish AvaloniaApplication4.Android/AvaloniaApplication4.Android.csproj \
-        -c Release \
-        -f net10.0-android \
-        -p:AndroidPackageFormat=apk \
-        --no-restore
+      run: dotnet publish AvaloniaApplication4.Android/AvaloniaApplication4.Android.csproj -c Release -f net10.0-android -p:AndroidPackageFormat=apk --no-restore
 
     - name: Find APK file
       id: find_apk
